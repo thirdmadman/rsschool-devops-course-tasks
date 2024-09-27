@@ -21,6 +21,8 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
       - name: Terraform init
+        run: cd ./task_1
+      - name: Dive in task dir
         run: terraform init
       - name: Terraform plan
         run: terraform plan
