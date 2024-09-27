@@ -25,6 +25,6 @@ jobs:
       - name: Terraform plan
         run: terraform plan
       - name: Test step for check is GH secrets works in bash
-        run: echo "The event type is ${{ github.event.action }}. Vars ${{ TF_VAR_aws_region }}, ${{ TF_VAR_backend_s3_bucket_name }}, ${{ TF_VAR_backend_s3_state_path }}"
+        run: echo "The event type is ${{ github.event.action }}. Vars $TF_VAR_aws_region, $TF_VAR_backend_s3_bucket_name, $TF_VAR_backend_s3_state_path"
       - name: Test step for check is GH secrets works last effort
         run: echo "Vars ${{ secrets.AWS_REGION }}, ${{ secrets.BACKEND_S3_BUCKET_NAME }}, ${{ secrets.BACKEND_S3_STATE_PATH }}"
