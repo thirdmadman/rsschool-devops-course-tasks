@@ -2,6 +2,9 @@ name: Github Actions workflow for deployment via Terraform
 
 permissions:
   pull-requests: write
+  id-token: write
+  contents: read
+
 
 on:
   pull_request:
@@ -68,8 +71,13 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+
       - name: Terraform init
         run: terraform init
 
       - name: Terraform apply
-        run: terraform apply
+        run: echo "terraform apply"
