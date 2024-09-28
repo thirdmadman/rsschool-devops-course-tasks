@@ -56,10 +56,10 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Terraform init
-        run: terraform init \
-          -backend-config="bucket=${{ secrets.BACKEND_S3_BUCKET_NAME }}" \
-          -backend-config="key=${{ secrets.BACKEND_S3_STATE_PATH }}" \
-          -backend-config="region=${{ secrets.AWS_REGION }}" \
+        run: > terraform init
+          -backend-config="bucket=${{ secrets.BACKEND_S3_BUCKET_NAME }}"
+          -backend-config="key=${{ secrets.BACKEND_S3_STATE_PATH }}"
+          -backend-config="region=${{ secrets.AWS_REGION }}"
           -backend-config="encrypt=true"
 
       - name: Terraform plan
