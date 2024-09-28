@@ -48,6 +48,11 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+
       - name: Terraform init
         run: terraform init
 
@@ -55,7 +60,7 @@ jobs:
         run: terraform plan
 
   terraform-apply:
-    name: Terraform format job
+    name: Terraform apply job
     runs-on: ubuntu-latest
     defaults:
       run:
