@@ -1,0 +1,3 @@
+aws_region  = "eu-north-1"
+backend_s3_bucket_name = "Terraform backend (state) bucket name"
+backend_s3_state_path = "Terraform backend (state) file path"
