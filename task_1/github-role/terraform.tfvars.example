@@ -1,0 +1,3 @@
+github_org  = "YOUR GITHUB NAME"
+github_repo = "YOUR REPO NAME"
+aws_region  = "eu-north-1"
