@@ -9,7 +9,7 @@ resource "aws_route_table" "rt_private" {
 resource "aws_route" "private_to_nat" {
   route_table_id         = aws_route_table.rt_private.id
   destination_cidr_block = "0.0.0.0/0"
-  network_interface_id = aws_network_interface.eni_ec2_natgw_private_1.id
+  network_interface_id   = aws_network_interface.eni_ec2_natgw_private_1.id
 }
 
 # Associate private subnets to the private route table
