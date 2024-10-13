@@ -11,5 +11,5 @@ resource "aws_instance" "ec2_instance_natgw" {
     Name = "ec2-instance-natgw"
   }
 
-  user_data = file("script_ec2_instance_natgw_init.tpl")
+  user_data = file("script_ec2_instance_natgw_init.sh")
 }
