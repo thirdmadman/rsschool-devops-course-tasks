@@ -9,5 +9,5 @@ resource "aws_instance" "ec2_instance_subnet_private_2" {
     Name = "private-ec2-instance-2"
   }
 
-  user_data = "${file("script_ec2_instance_private_init.sh")}"
+  user_data = file("script_ec2_instance_private_init.sh")
 }

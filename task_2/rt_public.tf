@@ -12,14 +12,13 @@ resource "aws_route" "public_internet_access" {
   gateway_id             = aws_internet_gateway.igw.id
 }
 
-# TODO: fix name
 # Associate public subnets to the public route table
-resource "aws_route_table_association" "assoc_1_rt_public" {
+resource "aws_route_table_association" "assoc_rt_public_1" {
   subnet_id      = aws_subnet.subnet_public_1.id
   route_table_id = aws_route_table.rt_public.id
 }
 
-resource "aws_route_table_association" "assoc_2_rt_public" {
+resource "aws_route_table_association" "assoc_rt_public_2" {
   subnet_id      = aws_subnet.subnet_public_2.id
   route_table_id = aws_route_table.rt_public.id
 }

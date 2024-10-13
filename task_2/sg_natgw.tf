@@ -1,12 +1,12 @@
 resource "aws_security_group" "sg_natgw" {
-  vpc_id = aws_vpc.vpc_task_2.id
-
+  vpc_id      = aws_vpc.vpc_task_2.id
+  description = "Security group for EC2 NAT GW instance"
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow SSH access"
+    description = "Allow SSH access from internet"
   }
 
   ingress {
@@ -26,7 +26,6 @@ resource "aws_security_group" "sg_natgw" {
   }
 
   tags = {
-    Name = "natgw-ec2-instance-sg"
-    description = "Security group for EC2 NAT GW instance"
+    name = "natgw-ec2-instance-sg"
   }
 }
