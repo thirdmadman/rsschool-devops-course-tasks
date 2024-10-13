@@ -3,9 +3,10 @@ resource "aws_instance" "ec2_instance_natgw" {
   instance_type = "t3.nano"
   key_name      = "ec2-natgw-instance"
 
-  subnet_id                   = aws_subnet.subnet_public_1.id
-  security_groups             = [aws_security_group.sg_natgw.id]
-  associate_public_ip_address = true
+  network_interface {
+    network_interface_id = aws_network_interface.eni_ec2_natgw_private_1.id
+    device_index         = 0
+  }
 
   tags = {
     Name = "ec2-instance-natgw"

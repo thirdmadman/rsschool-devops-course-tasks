@@ -13,8 +13,16 @@ resource "aws_security_group" "sg_natgw" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [var.vpc_cidr]
-    description = "Allow all traffic within VPC"
+    cidr_blocks = [aws_subnet.subnet_private_1.cidr_block]
+    description = "Allow all inbound traffic from private subnet 2"
+  }
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [aws_subnet.subnet_private_2.cidr_block]
+    description = "Allow all inbound traffic from private subnet 2"
   }
 
   egress {
