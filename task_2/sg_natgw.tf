@@ -34,6 +34,6 @@ resource "aws_security_group" "sg_natgw" {
   }
 
   tags = {
-    name = "natgw-ec2-instance-sg"
+    Name = "natgw-ec2-instance-sg"
   }
 }
