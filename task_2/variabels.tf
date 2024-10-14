@@ -40,3 +40,15 @@ variable "availability_zone_2" {
   default     = "eu-north-1b"
 }
 
+
+variable "ec2_natgw_instance_key_name" {
+  description = "The private key name in AWS for the EC2 NAT GW instance"
+  type        = string
+  default     = "ec2-natgw-instance"
+}
+
+variable "ec2_private_instance_key_name" {
+  description = "The private key name in AWS for the EC2 private (test) instance"
+  type        = string
+  default     = "ec2-private-instances"
+}

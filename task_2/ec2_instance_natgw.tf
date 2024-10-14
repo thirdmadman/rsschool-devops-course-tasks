@@ -1,7 +1,7 @@
 resource "aws_instance" "ec2_instance_natgw" {
   ami           = "ami-097c5c21a18dc59ea"
   instance_type = "t3.micro"
-  key_name      = "ec2-natgw-instance"
+  key_name      = var.ec2_natgw_instance_key_name
 
   network_interface {
     network_interface_id = aws_network_interface.eni_ec2_natgw_private_1.id
