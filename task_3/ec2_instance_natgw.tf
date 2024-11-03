@@ -1,5 +1,5 @@
 resource "aws_instance" "ec2_instance_natgw" {
-  ami           = "ami-097c5c21a18dc59ea"
+  ami           = "ami-02db68a01488594c5"
   instance_type = "t3.micro"
   key_name      = var.ec2_natgw_instance_key_name
 
