@@ -5,6 +5,10 @@ resource "aws_instance" "k3s_main_ec2_instance" {
   subnet_id       = aws_subnet.subnet_private_1.id
   security_groups = [aws_security_group.sg_private_ec2.id]
 
+  root_block_device {
+    volume_size = 20
+  }
+
   tags = {
     Name = "k3s-main-ec2-instance"
   }
