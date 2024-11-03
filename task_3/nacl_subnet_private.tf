@@ -26,5 +26,5 @@ resource "aws_network_acl" "private" {
 
 resource "aws_network_acl_association" "subnet_private_1" {
   subnet_id      = aws_subnet.subnet_private_1.id
-  network_acl_id = aws_network_acl.public.id
+  network_acl_id = aws_network_acl.private.id
 }
