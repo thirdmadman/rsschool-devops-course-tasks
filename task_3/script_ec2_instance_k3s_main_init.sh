@@ -29,132 +29,141 @@ helm repo update
 echo 'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml' >> ~/.bashrc
 source ~/.bashrc
 
-kubectl create ns jenkins
+helm repo add bitnami https://charts.bitnami.com/bitnami
+# helm install wordpress bitnami/wordpress --set service.type=NodePort --set service.nodePorts.http=32000 --set service.nodePorts.https=32001
+
+mkdir mkdir -p /root/wordpress-chart/templates/
+
+echo 'apiVersion: v2
+name: wordpress-chart
+description: A simple WordPress Helm chart
+version: 0.1.0
+appVersion: "6.6.2"' >> /root/wordpress-chart/Chart.yaml
+
+echo 'wordpress:
+  image: wordpress:6.6.2-php8.1-apache
+  replicaCount: 1
+  service:
+    type: NodePort
+    port: 80
+    nodePort: 32000
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "250m"
+  env:
+    WORDPRESS_DB_HOST: mysql
+    WORDPRESS_DB_USER: wordpress
+    WORDPRESS_DB_PASSWORD: wordpresspass
+    WORDPRESS_DB_NAME: wordpress
+
+mysql:
+  image: mysql:8.0
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 3306
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "250m"
+  env:
+    MYSQL_ROOT_PASSWORD: rootpassword
+    MYSQL_DATABASE: wordpress
+    MYSQL_USER: wordpress
+    MYSQL_PASSWORD: wordpresspass' >> /root/wordpress-chart/values.yaml
+
+echo 'apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: {{ .Values.mysql.replicaCount }}
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: {{ .Values.mysql.image }}
+        ports:
+        - containerPort: 3306
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: {{ .Values.mysql.env.MYSQL_ROOT_PASSWORD }}
+          - name: MYSQL_DATABASE
+            value: {{ .Values.mysql.env.MYSQL_DATABASE }}
+          - name: MYSQL_USER
+            value: {{ .Values.mysql.env.MYSQL_USER }}
+          - name: MYSQL_PASSWORD
+            value: {{ .Values.mysql.env.MYSQL_PASSWORD }}
+        resources:
+          requests:
+            memory: {{ .Values.mysql.resources.requests.memory }}
+            cpu: {{ .Values.mysql.resources.requests.cpu }}' >> /root/wordpress-chart/templates/mysql-deployment.yaml
 
 echo 'apiVersion: v1
-kind: PersistentVolume
+kind: Service
 metadata:
-  name: jenkins-pv
-  namespace: jenkins
+  name: mysql
 spec:
-  storageClassName: jenkins-pv
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 4Gi
-  persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: /data/jenkins-volume/
+  type: {{ .Values.mysql.service.type }}
+  ports:
+    - port: {{ .Values.mysql.service.port }}
+      targetPort: 3306
+  selector:
+    app: mysql' >> /root/wordpress-chart/templates/mysql-service.yaml
 
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
+echo 'apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: jenkins-pv
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer' >> /root/jenkins-volume.yaml
+  name: wordpress
+spec:
+  replicas: {{ .Values.wordpress.replicaCount }}
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+      - name: wordpress
+        image: {{ .Values.wordpress.image }}
+        ports:
+        - containerPort: 80
+        env:
+          - name: WORDPRESS_DB_HOST
+            value: {{ .Values.wordpress.env.WORDPRESS_DB_HOST }}
+          - name: WORDPRESS_DB_USER
+            value: {{ .Values.wordpress.env.WORDPRESS_DB_USER }}
+          - name: WORDPRESS_DB_PASSWORD
+            value: {{ .Values.wordpress.env.WORDPRESS_DB_PASSWORD }}
+          - name: WORDPRESS_DB_NAME
+            value: {{ .Values.wordpress.env.WORDPRESS_DB_NAME }}
+        resources:
+          requests:
+            memory: {{ .Values.wordpress.resources.requests.memory }}
+            cpu: {{ .Values.wordpress.resources.requests.cpu }}' >> /root/wordpress-chart/templates/wordpress-deployment.yaml
 
-mkdir -p /data/jenkins-volume/
-kubectl apply -f /root/jenkins-volume.yaml
-sudo chown -R 1000:1000 /data/jenkins-volume
-
-echo '---
-apiVersion: v1
-kind: ServiceAccount
+echo 'apiVersion: v1
+kind: Service
 metadata:
-  name: jenkins
-  namespace: jenkins
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  annotations:
-    rbac.authorization.kubernetes.io/autoupdate: "true"
-  labels:
-    kubernetes.io/bootstrapping: rbac-defaults
-  name: jenkins
-rules:
-- apiGroups:
-  - "*"
-  resources:
-  - statefulsets
-  - services
-  - replicationcontrollers
-  - replicasets
-  - podtemplates
-  - podsecuritypolicies
-  - pods
-  - pods/log
-  - pods/exec
-  - podpreset
-  - poddisruptionbudget
-  - persistentvolumes
-  - persistentvolumeclaims
-  - jobs
-  - endpoints
-  - deployments
-  - deployments/scale
-  - daemonsets
-  - cronjobs
-  - configmaps
-  - namespaces
-  - events
-  - secrets
-  verbs:
-  - create
-  - get
-  - watch
-  - delete
-  - list
-  - patch
-  - update
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - get
-  - list
-  - watch
-  - update
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  annotations:
-    rbac.authorization.kubernetes.io/autoupdate: "true"
-  labels:
-    kubernetes.io/bootstrapping: rbac-defaults
-  name: jenkins
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: jenkins
-subjects:
-- apiGroup: rbac.authorization.k8s.io
-  kind: Group
-  name: system:serviceaccounts:jenkins' >> /root/jenkins-sa.yaml
+  name: wordpress
+spec:
+  type: {{ .Values.wordpress.service.type }}
+  ports:
+    - port: {{ .Values.wordpress.service.port }}
+      targetPort: 80
+      nodePort: {{ .Values.wordpress.service.nodePort }}
+  selector:
+    app: wordpress' >> /root/wordpress-chart/templates/wordpress-service.yaml
 
-kubectl apply -f /root/jenkins-sa.yaml
-
-curl https://raw.githubusercontent.com/jenkinsci/helm-charts/main/charts/jenkins/values.yaml >> /root/jenkins-values.yaml
-
-sed -i -e 's/  size: "8Gi"/  size: "4Gi"/g' /root/jenkins-values.yaml
-sed -i -e 's/  nodePort:/  nodePort: 32000/g' /root/jenkins-values.yaml
-sed -i -e 's/  storageClass:/  storageClass: jenkins-pv/g' /root/jenkins-values.yaml
-sed -i -e ':a;N;$!ba;s/name should be created\n  create: true/name should be created\n  create: false/g' /root/jenkins-values.yaml
-sed -i -e ':a;N;$!ba;s/access-controlled resources\n  name:/access-controlled resources\n  name: jenkins/g' /root/jenkins-values.yaml
-
-helm repo add jenkinsci https://charts.jenkins.io && helm repo update
-
-chart=jenkinsci/jenkins
-helm install jenkins -n jenkins -f /root/jenkins-values.yaml $chart
-
-kubectl patch svc jenkins -n jenkins -p '{"spec": {"type": "NodePort", "ports": [{"port": 8080, "nodePort": 32000}]}}'
-
-jsonpath="{.data.jenkins-admin-password}"
-secret=$(kubectl get secret -n jenkins jenkins -o jsonpath=$jsonpath)
-echo "Jenkins password:"
-echo $(echo $secret | base64 --decode)
+helm install my-release /root/wordpress-chart
 
 echo "Setup is done"
