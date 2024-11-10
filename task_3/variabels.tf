@@ -33,3 +33,9 @@ variable "ec2_private_instance_key_name" {
   type        = string
   default     = "ec2-private-instances"
 }
+
+variable "k3s_main_ec2_instance_private_ip" {
+  description = "The private IP of the K3s main EC2 instance"
+  type        = string
+  default     = "10.0.3.10"
+}
