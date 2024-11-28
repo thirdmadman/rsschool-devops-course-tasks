@@ -1,6 +1,6 @@
 resource "aws_instance" "k3s_main_ec2_instance" {
   ami             = "ami-02db68a01488594c5"
-  instance_type   = "t3.micro"
+  instance_type   = "t3.small"
   key_name        = var.ec2_private_instance_key_name
   subnet_id       = aws_subnet.subnet_private_1.id
   private_ip      = var.k3s_main_ec2_instance_private_ip
