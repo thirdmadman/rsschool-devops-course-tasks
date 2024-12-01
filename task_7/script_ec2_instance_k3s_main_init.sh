@@ -41,8 +41,4 @@ echo 'helm list --all-namespaces' && helm list --all-namespaces
 echo 'kubectl get svc --all-namespaces' && kubectl get svc --all-namespaces
 echo 'kubectl get pods -o wide --all-namespaces' && kubectl get pods -o wide --all-namespaces
 
-curl http://localhost:32090/
-
-curl http://localhost:32090/metrics
-
 echo "Setup is done"
