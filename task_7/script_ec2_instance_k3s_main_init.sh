@@ -29,6 +29,8 @@ helm repo update
 echo 'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml' >> ~/.bashrc
 source ~/.bashrc
 
+kubectl create ns prometheus
+
 kubectl get svc --all-namespaces
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
