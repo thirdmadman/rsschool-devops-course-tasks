@@ -29,6 +29,8 @@ helm repo update
 echo 'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml' >> ~/.bashrc
 source ~/.bashrc
 
-
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm upgrade --install prometheus bitnami/kube-prometheus --set prometheus.service.type=NodePort --set prometheus.service.nodePorts.http=32090 --dry-run
 
 echo "Setup is done"
