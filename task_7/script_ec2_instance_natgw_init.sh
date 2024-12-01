@@ -35,7 +35,9 @@ echo 'server {
     proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header   X-Forwarded-Host $server_name;
   }
+}
 
+server {
   listen 9090;
   server_name localhost 127.0.0.1;
 
