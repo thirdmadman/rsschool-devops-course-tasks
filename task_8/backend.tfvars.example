@@ -1,0 +1,3 @@
+bucket = "Terraform backend (state) bucket name"
+key    = "Terraform backend (state) file path"
+region = "eu-north-1"
