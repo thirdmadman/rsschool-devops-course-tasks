@@ -13,6 +13,7 @@ on:
 
 jobs:
   terraform-check:
+    if: github.event.pull_request.head.ref == 'task-7'
     name: Terraform format job
     runs-on: ubuntu-latest
     defaults:
@@ -29,6 +30,7 @@ jobs:
         run: terraform fmt -check
 
   terraform-plan:
+    if: github.event.pull_request.head.ref == 'task-7'
     needs: terraform-check
     name: Terraform plan job
     runs-on: ubuntu-latest
@@ -65,6 +67,7 @@ jobs:
         run: terraform plan
 
   terraform-apply:
+    if: github.event.pull_request.head.ref == 'task-7'
     needs: terraform-plan
     name: Terraform apply job
     runs-on: ubuntu-latest
