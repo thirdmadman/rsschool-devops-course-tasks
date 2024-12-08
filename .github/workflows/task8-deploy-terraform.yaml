@@ -10,7 +10,8 @@ on:
     branches:
       - master
     types: [opened, reopened]
-
+    paths:
+      - 'task_8/**'
 jobs:
   terraform-check:
     if: github.event.pull_request.head.ref == 'task-8'

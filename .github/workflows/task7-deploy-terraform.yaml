@@ -10,6 +10,8 @@ on:
     branches:
       - master
     types: [opened, reopened]
+    paths:
+      - 'task_7/**'
 
 jobs:
   terraform-check:
