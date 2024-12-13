@@ -1,4 +1,4 @@
-name: Task 7 Github Actions workflow for deployment via Terraform
+name: Task 8 Github Actions workflow for deployment via Terraform
 
 permissions:
   pull-requests: write
@@ -11,16 +11,15 @@ on:
       - master
     types: [opened, reopened]
     paths:
-      - 'task_7/**'
-
+      - 'task_8/**'
 jobs:
   terraform-check:
-    if: github.event.pull_request.head.ref == 'task-7'
+    if: github.event.pull_request.head.ref == 'task-8'
     name: Terraform format job
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./task_7
+        working-directory: ./task_8
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,13 +31,13 @@ jobs:
         run: terraform fmt -check
 
   terraform-plan:
-    if: github.event.pull_request.head.ref == 'task-7'
+    if: github.event.pull_request.head.ref == 'task-8'
     needs: terraform-check
     name: Terraform plan job
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./task_7
+        working-directory: ./task_8
 
     env:
       TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
@@ -69,13 +68,13 @@ jobs:
         run: terraform plan
 
   terraform-apply:
-    if: github.event.pull_request.head.ref == 'task-7'
+    if: github.event.pull_request.head.ref == 'task-8'
     needs: terraform-plan
     name: Terraform apply job
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./task_7
+        working-directory: ./task_8
     env:
       TF_VAR_aws_region: ${{ secrets.AWS_REGION }}
       TF_VAR_backend_s3_bucket_name: ${{ secrets.BACKEND_S3_BUCKET_NAME }}
